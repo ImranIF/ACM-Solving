@@ -1,0 +1,153 @@
+#include<bits/stdc++.h>
+#include<ext/pb_ds/tree_policy.hpp>
+#include<ext/pb_ds/assoc_container.hpp>
+using namespace __gnu_pbds;
+using namespace std;
+
+///--->>> CONTAINERS <<<---///
+using i64 = int64_t;
+using ll = long long;
+using ld = long double;
+using vi = vector<ll>;
+using vvi = vector<vector< ll > >;
+using vpr = vector<pair<ll,ll> >;
+using pr = pair<ll,ll>;
+using st = set<ll>;
+using stk = stack<ll>;
+using kiwi = queue<ll>;
+using pkiwi = priority_queue<ll>;
+using deck = deque<ll>;
+using mp = map<ll,ll>;
+using ump = unordered_map<ll,ll>;
+
+///--->>> MACROS<<<---///
+const ll mx = 3e5+123;
+#define MOD 998244353
+#define mod 1000000007
+#define isb(z) __builtin_popcount(z)
+#define lisb(z) __builtin_popcountll(z)
+#define iclz(z) __builtin_clz(z)
+#define lclz(z) __builtin_clzll(z)
+#define ictz(z) __builtin_ctz(z)
+#define lctz(z) __builtin_ctzll(z)
+#define REP(i,n) for (ll i=1;i<=n;++i)
+#define fastio ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
+
+///--->>> TEMPLATES <<<---///
+template<typename T>
+using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update >;
+
+template<typename T>
+T modpow(T a, T b){ll ans = 1; while(b>0) { if(b&1) ans*=a, b--; else a*=a, b>>=1;} return ans; }
+
+///--->>>OPTIMIZE<<<---///
+#pragma GCC target ("avx2")
+#pragma GCC optimization ("O3")
+#pragma GCC optimization ("unroll-loops")
+
+///--->>> DEBUGGER<<<---///
+#define dbg(args...) do {cerr<<#args<<" : "; diraf(args); } while(0)
+void diraf ()  {cerr << endl;}
+template < typename T, typename ... hello>
+void diraf( T arg, const hello &... rest) {cerr<<arg<< ' ';diraf(rest...);}
+
+///--->>> RANDOMIZER<<<---///
+mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+/* usage - just do rng() */
+
+int main(int argc, char* argv[]){
+    fastio;
+    cin.exceptions(cin.failbit);
+    ///freopen("input.txt","r",stdin);
+    ///freopen("output.txt","w",stdout);
+    ///cout<<fixed<<setprecision(20);
+    ll tc; cin>>tc;
+    while(tc--){
+        ll n, ch , cv, x, ans = INT_MAX, pos = n; cin>>n>>cv>>ch;
+        map<ll, pair<ll,bool>> mp;
+        bool problem = false;
+        for(ll i = 0 ; i<n; ++i){
+            cin>>x;
+            if(x == 1e6+1 && i==n-1) problem = true;///, pos = i+1;
+            mp[i+1] = {x, true};
+            ///mp[{i+1, x}] = true;
+        }
+        bool okay = true;
+        for(ll i = 1; i<n; ++i){
+            if(abs(mp[i].first - mp[i+1].first) > 1 && !problem){
+                cout<<0<<endl;
+                okay = false;
+                break;
+            }
+            else{
+                if(!problem){
+                    if(mp[i].first == mp[i+1].first){
+                        if(i+2 <=n && mp[i+2].second != mp[i+1].second || i > 1 && mp[i-1].first!=mp[i].first){
+                            ans = min(ans, min(2*ch, min(ch + ch, cv)));
+                        }
+                        else{
+                            ans = min(ans, min(2*ch, ch + cv));
+                        }
+                    }
+                    else if(abs(mp[i].first - mp[i+1].first ) <= 1){
+                        ans = min(ans, min(ch, cv));
+                    }
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        if(problem){
+            if(mp[pos].first == mp[pos-1].first){
+                if(pos>2 && mp[pos-2].first!=mp[pos-1].first)
+                    ans = min(ans, min(2*ch, min(ch+cv, 2*cv)));
+                else
+                ans = min(2*ch, ch+cv);
+            }
+            else if(abs(mp[pos].first - mp[pos-1].first) <=1){
+                ///if(pos>2 && mp[pos-2].first!=mp[pos-1].first)
+                    ///ans = min(2*ch, min(cv, ch))
+                //else
+                if(pos>2 && mp[pos-2].first==mp[pos-1].first)
+                    ans = min(ch, cv);
+                else
+                    ans = min(2*ch, cv);
+
+            }
+            else
+                ans = min(ch, cv);
+        }
+        if(okay){
+            cout<<ans<<endl;
+        }
+    }
+
+return 0;
+}
+/*
+555
+2 3 4
+2 2
+7
+2 3 4
+3 2
+3
+2 4 3
+3 2
+3
+2 10 15
+1000001
+1000001
+25
+2
+10 15
+1000001
+1000000
+10
+2 10 15
+1000000
+1000001
+10
+
+*/
