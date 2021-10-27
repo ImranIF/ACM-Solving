@@ -1,0 +1,98 @@
+#include<bits/stdc++.h>
+#include<ext/pb_ds/tree_policy.hpp>
+#include<ext/pb_ds/assoc_container.hpp>
+using namespace __gnu_pbds;
+using namespace std;
+
+///--->>> CONTAINERS <<<---///
+using i64 = int64_t;
+using ll = long long;
+using ld = long double;
+using vi = vector<ll>;
+using vvi = vector<vector< ll > >;
+using vpi = vector<pair<ll,ll> >;
+using pi = pair<ll,ll>;
+using st = set<ll>;
+using stk = stack<ll>;
+using kiwi = queue<ll>;
+using pkiwi = priority_queue<ll>;
+using mp = map<ll,ll>;
+using ump = unordered_map<ll,ll>;
+
+///--->>> TEMPLATES <<<---///
+template<typename T>
+using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update >;
+
+///--->>> MACROS<<<---///
+const ll mx = 3e5+123;
+#define MOD 998244353
+#define mod 1000000007
+#define isb(z) __builtin_popcount(z)
+#define lisb(z) __builtin_popcountll(z)
+#define iclz(z) __builtin_clz(z)
+#define lclz(z) __builtin_clzll(z)
+#define ictz(z) __builtin_ctz(z)
+#define lctz(z) __builtin_ctzll(z)
+#define REP(i,n) for (ll i=1;i<=n;++i)
+#define fastio ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
+
+///--->>>OPTIMIZE<<<---///
+#pragma GCC target ("avx2")
+#pragma GCC optimization ("O3")
+#pragma GCC optimization ("unroll-loops")
+
+///--->>> DEBUGGER<<<---///
+#define dbg(args...) do {cerr<<#args<<" : "; diraf(args); } while(0)
+void diraf ()  {        cerr << endl;}
+template < typename T, typename ... hello>void diraf( T arg, const hello &... rest) {cerr<<arg<< ' ';diraf(rest...);}
+
+///--->>> RANDOMIZER<<<---///
+mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+/* usage - just do rng() */
+vpi a;
+
+int main(int argc, char* argv[]){
+    fastio;
+    cin.exceptions(cin.failbit);
+    ll tc; cin>>tc;
+    while(tc--){
+    	ll n, w, sum = 0, num; cin>>n>>w;
+    	///vector<pair<ll,ll> > a;
+    	stk ans;
+    	for(ll i=0;i<n;++i){
+            cin>>num;
+            if(num>=(w+1)/2 && num <=w){
+            	ans.emplace(i+1);
+            	///break;
+            	}
+            else if(num<(w+1)/2){
+            a.emplace_back(num, i);
+            	}
+            }
+        if(!ans.empty()){
+        	cout<<1<<endl;
+	        cout<<ans.top()<<endl;
+	        a.clear();
+        	continue;
+        }
+        ///sort(a.begin(), a.end(), [](auto& x, auto& y){return x.first>=y.first;});
+        for(ll i=0;i<a.size();++i){
+        	if(sum+a[i].first <=w)
+        		sum+=a[i].first, ans.emplace(a[i].second + 1);
+        	if(sum>=(w+1)/2) break;
+        }
+        if(sum<(w+1)/2 || ans.size()==0){
+        	cout<<-1<<endl;
+        	a.clear();
+        	continue;
+        	}
+        cout<<ans.size()<<endl;
+        while(!ans.empty()){
+        	cout<<ans.top()<<" ";
+        	ans.pop();
+        	}
+        cout<<endl;
+        a.clear();
+     }
+return 0;
+}
