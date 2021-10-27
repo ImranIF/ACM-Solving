@@ -1,0 +1,88 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+///--->>> CONTAINERS <<<---///
+using i64 = int64_t;
+using ll = long long;
+using ld = long double;
+using vi = vector<ll>;
+using vvi = vector<vector< ll > >;
+using vpi = vector<pair<ll,ll> >;
+using pi = pair<ll,ll>;
+using st = set<ll>;
+using stk = stack<ll>;
+using kiwi = queue<ll>;
+using pkiwi = priority_queue<ll>;
+using mp = map<ll,ll>;
+using ump = unordered_map<ll,ll>;
+
+///--->>> MACROS<<<---///
+const ll mx = 3e5+123;
+#define MOD 1000000007
+#define isb(z) __builtin_popcount(z)
+#define lisb(z) __builtin_popcountll(z)
+#define iclz(z) __builtin_clz(z)
+#define lclz(z) __builtin_clzll(z)
+#define ictz(z) __builtin_ctz(z)
+#define lctz(z) __builtin_ctzll(z)
+#define REP(i,n) for (ll i=1;i<=n;++i)
+#define fastio ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
+
+///--->>>OPTIMIZE<<<---///
+#pragma GCC target ("avx2")
+#pragma GCC optimization ("O3")
+#pragma GCC optimization ("unroll-loops")
+
+#include<ext/pb_ds/assoc_container.hpp>
+using namespace __gnu_pbds;
+typedef tree<ll, null_type, less_equal<ll>, rb_tree_tag, tree_order_statistics_node_update > ordered_set;
+
+///--->>> DEBUGGER<<<---///
+#define dbg(args...) do {cerr<<#args<<" : "; diraf(args); } while(0)
+void diraf ()  {        cerr << endl;}
+template < typename T, typename ... hello>void diraf( T arg, const hello &... rest) {cerr<<arg<< ' ';diraf(rest...);}
+
+vi base;
+vvi matrix, identity, tmp;
+
+void multiply(vvi A, vvi B, ll dim, ll exp){
+    tmp.assign(2, vector<ll>(2, 0));
+
+    for(ll i=0;i<dim;++i){
+        for(ll j=0;j<dim;++j){
+            for(ll k=0;k<dim;++k)
+                tmp[i][j]+=(A[i][k]%MOD * (B[k][j]%MOD))%MOD;
+        }
+    }
+    if(exp & 1)
+        identity = tmp;
+    else matrix = tmp;
+}
+
+void matExp(ll dim, ll exp){
+
+    while(exp){
+        if(exp & 1){
+            multiply(identity, matrix, dim, exp), exp--;
+        }
+        else {
+            multiply(matrix, matrix, dim, exp), exp>>=1;
+        }
+    }
+
+    matrix = identity;
+}
+
+int main(int argc, char* argv[]){
+    fastio;
+    cin.exceptions(cin.failbit);
+    ///cout<<fixed<<setprecision(20);
+        ll n; cin>>n;
+        base.emplace_back(0), base.emplace_back(1);
+        matrix.assign(2, vector<ll>(2, 1)); matrix[0][0] = 0;
+        identity.assign(2, vector<ll>(2, 0)); identity[0][0] = 1, identity[1][1] = 1;
+        matExp(2, n);
+        cout<<((base[0] * matrix[0][0])%MOD + (base[1] * matrix[1][0] )% MOD)%MOD<<endl;
+
+return 0;
+}
