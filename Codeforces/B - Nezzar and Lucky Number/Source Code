@@ -1,0 +1,113 @@
+#include<bits/stdc++.h>
+#include<ext/pb_ds/tree_policy.hpp>
+#include<ext/pb_ds/assoc_container.hpp>
+using namespace __gnu_pbds;
+using namespace std;
+
+///--->>> CONTAINERS <<<---///
+using i64 = int64_t;
+using ll = long long;
+using ld = long double;
+using vi = vector<ll>;
+using vvi = vector<vector< ll > >;
+using vpr = vector<pair<ll,ll> >;
+using pr = pair<ll,ll>;
+using st = set<ll>;
+using stk = stack<ll>;
+using kiwi = queue<ll>;
+using pkiwi = priority_queue<ll>;
+using deck = deque<ll>;
+using mp = map<ll,bool>;
+using ump = unordered_map<ll,ll>;
+
+///--->>> MACROS<<<---///
+const ll mx = 3e5+123;
+#define MOD 998244353
+#define mod 1000000007
+#define isb(z) __builtin_popcount(z)
+#define lisb(z) __builtin_popcountll(z)
+#define iclz(z) __builtin_clz(z)
+#define lclz(z) __builtin_clzll(z)
+#define ictz(z) __builtin_ctz(z)
+#define lctz(z) __builtin_ctzll(z)
+#define REP(i,n) for (ll i=1;i<=n;++i)
+#define fastio ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
+
+///--->>> TEMPLATES <<<---///
+template<typename T>
+using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update >;
+
+template<typename T>
+T modpow(T a, T b){ll ans = 1; while(b>0) { if(b&1) ans*=a, b--; else a*=a, b>>=1;} return ans; }
+
+///--->>>OPTIMIZE<<<---///
+#pragma GCC target ("avx2")
+#pragma GCC optimization ("O3")
+#pragma GCC optimization ("unroll-loops")
+
+///--->>> DEBUGGER<<<---///
+#define dbg(args...) do {cerr<<#args<<" : "; diraf(args); } while(0)
+void diraf ()  {cerr << endl;}
+template < typename T, typename ... hello>
+void diraf( T arg, const hello &... rest) {cerr<<arg<< ' ';diraf(rest...);}
+
+///--->>> RANDOMIZER<<<---///
+mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+/* usage - just do rng() */
+
+int main(int argc, char* argv[]){
+    fastio;
+    cin.exceptions(cin.failbit);
+    ll tc; cin>>tc;
+    while(tc--){
+        ll n, k; cin>>n>>k;
+        vi a(n);
+        for(auto& x:a)
+            cin>>x;
+        vector<ll> path;
+        ll dig = 10;
+        for(ll d = k; d<=100; d+=k){
+                path.emplace_back(d), path.emplace_back(dig+k);
+            ///M[d] = 1, M[dig+k] = 1;
+            ///dbg(d, dig+k);
+            dig+=10;
+        }
+        for(ll i = 0 ;i <n; ++i){
+            ll tmp  = a[i];
+            if(tmp%k==0 || a[i]>= k*10){
+                cout<<"YES"<<endl;
+                continue;
+            }
+            bool okay = false;
+            while(tmp>0){
+                if(tmp%10==k){
+                    cout<<"YES"<<endl;
+                    okay = true;
+                    break;
+                }
+                tmp/=10;
+            }
+
+            ///M[18] = 0;
+            if(!okay){
+                tmp = a[i];
+                tmp %= 100;
+                for(auto& z:path){
+                    if(z > tmp) continue;
+                    ///dbg(z, tmp, z -tmp);
+                    if(z == tmp || find(path.begin(), path.end(), tmp - z)!= path.end())
+                    {
+                        cout<<"YES"<<endl;
+
+                        okay = true;
+                        break;
+                    }
+                }
+                if(!okay)
+                    cout<<"NO"<<endl;
+            }
+        }
+    }
+
+return 0;
+}

@@ -1,0 +1,103 @@
+#include<bits/stdc++.h>
+#include<ext/pb_ds/tree_policy.hpp>
+#include<ext/pb_ds/assoc_container.hpp>
+using namespace __gnu_pbds;
+using namespace std;
+
+///--->>> CONTAINERS <<<---///
+using i64 = int64_t;
+using ll = long long;
+using ld = long double;
+using vi = vector<ll>;
+using vvi = vector<vector< ll > >;
+using vpi = vector<pair<ll,ll> >;
+using pi = pair<ll,ll>;
+using st = set<ll>;
+using stk = stack<ll>;
+using kiwi = queue<ll>;
+using pkiwi = priority_queue<ll>;
+using mp = map<ll,ll>;
+using ump = unordered_map<ll,ll>;
+
+///--->>> TEMPLATES <<<---///
+template<typename T>
+using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update >;
+
+///--->>> MACROS<<<---///
+const ll mx = 3e5+123;
+#define MOD 998244353
+#define mod 1000000007
+#define isb(z) __builtin_popcount(z)
+#define lisb(z) __builtin_popcountll(z)
+#define iclz(z) __builtin_clz(z)
+#define lclz(z) __builtin_clzll(z)
+#define ictz(z) __builtin_ctz(z)
+#define lctz(z) __builtin_ctzll(z)
+#define REP(i,n) for (ll i=1;i<=n;++i)
+#define fastio ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
+
+///--->>>OPTIMIZE<<<---///
+#pragma GCC target ("avx2")
+#pragma GCC optimization ("O3")
+#pragma GCC optimization ("unroll-loops")
+
+///--->>> DEBUGGER<<<---///
+#define dbg(args...) do {cerr<<#args<<" : "; diraf(args); } while(0)
+void diraf ()  {        cerr << endl;}
+template < typename T, typename ... hello>void diraf( T arg, const hello &... rest) {cerr<<arg<< ' ';diraf(rest...);}
+
+///--->>> RANDOMIZER<<<---///
+mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+/* usage - just do rng() */
+
+vvi identity, result, transition;
+vi base;
+void multiply(vvi a, vvi b, ll idx){
+    result.assign(2, vi(2, 0));
+
+    for(ll i = 0 ; i<2; ++i){
+        for(ll j = 0; j <2; ++j){
+            for(ll k = 0; k <2; ++k){
+                result[i][j] +=  (a[i][k] * b[k][j])%mod;
+               // dbg(result[i][j]);
+            }
+        }
+    }
+    if(idx&1)
+        identity = result;
+    else transition = result;
+}
+
+void matExp(ll idx){
+    while(idx>0){
+        if(idx%2==0)
+            multiply(transition, transition, idx), idx>>=1;
+        else multiply(identity, transition, idx), idx--;
+    }
+    transition = identity;
+}
+
+int main(int argc, char* argv[]){
+    fastio;
+    cin.exceptions(cin.failbit);
+    ///freopen("input.txt","r",stdin);
+    ///freopen("output.txt","w",stdout);
+    ///cout<<fixed<<setprecision(20);
+    ll n; cin>>n;
+    base.resize(2);
+    base = {1 , 0};
+    identity.assign(2, vi(2, 0)); transition.resize(2, vi(2));
+    for(ll i = 0; i < 2; ++i){
+        identity[i][i] = 1;
+    }
+    transition = {{19, 7}, {6, 20}};
+    matExp(n);
+    cout<<(base[0] * transition[0][0])%mod <<endl;
+return 0;
+}
+
+/// Happy->Happy : 19 ways
+/// Happy->Sad : 7 ways
+/// Sad->Happy : 6 ways
+/// Sad->Sad : 20 ways
+/// Find base matrix:
