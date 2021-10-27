@@ -1,0 +1,114 @@
+#include<bits/stdc++.h>
+#include<ext/pb_ds/tree_policy.hpp>
+#include<ext/pb_ds/assoc_container.hpp>
+using namespace __gnu_pbds;
+using namespace std;
+
+///--->>> CONTAINERS <<<---///
+using i64 = int64_t;
+using ll = long long;
+using ld = long double;
+using vi = vector<ll>;
+using vvi = vector<vector< ll > >;
+using vpi = vector<pair<ll,ll> >;
+using pi = pair<ll,ll>;
+using st = set<ll>;
+using stk = stack<ll>;
+using kiwi = queue<ll>;
+using pkiwi = priority_queue<ll>;
+using mp = map<ll,ll>;
+using ump = unordered_map<ll,ll>;
+
+///--->>> TEMPLATES <<<---///
+template<typename T>
+using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update >;
+
+///--->>> MACROS<<<---///
+const ll mx = 3e5+123;
+#define MOD 1000000007
+#define isb(z) __builtin_popcount(z)
+#define lisb(z) __builtin_popcountll(z)
+#define iclz(z) __builtin_clz(z)
+#define lclz(z) __builtin_clzll(z)
+#define ictz(z) __builtin_ctz(z)
+#define lctz(z) __builtin_ctzll(z)
+#define REP(i,n) for (ll i=1;i<=n;++i)
+#define fastio ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
+
+///--->>>OPTIMIZE<<<---///
+#pragma GCC target ("avx2")
+#pragma GCC optimization ("O3")
+#pragma GCC optimization ("unroll-loops")
+
+///--->>> DEBUGGER<<<---///
+#define dbg(args...) do {cerr<<#args<<" : "; diraf(args); } while(0)
+void diraf ()  {        cerr << endl;}
+template < typename T, typename ... hello>void diraf( T arg, const hello &... rest) {cerr<<arg<< ' ';diraf(rest...);}
+
+///--->>> RANDOMIZER<<<---///
+mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+
+///generates prime factors of some number
+namespace IMRAN{
+    vi primes;
+    bool status[100000001];
+
+    void sieve(ll num){
+        for(ll i=4;i<=num;i+=2) status[i]=1;
+        primes.emplace_back(2);
+        for(ll i=3;i*i<=num;i++){
+            if(status[i]==0){
+                for(ll j=i*i;j<=num;j+=i)
+                    status[j]=1;
+            }
+        }
+    }
+    void genPrimes(ll num){
+        sieve(num);
+        for(ll i=3;i<=num;++i)
+            if(status[i]==0) primes.emplace_back(i); ///stores prime numbers if i has not been visited over during sieve of Eratosthenes
+    }
+
+    vi factorize(ll num){
+        vi factors;
+        for(auto& x:primes){
+            while(num%x==0){
+                factors.emplace_back(x), num/=x;
+
+                }
+            }
+        if(num>1)
+            factors.emplace_back(num);
+        return factors;
+        }
+}
+
+using namespace IMRAN;
+
+int main(int argc, char* argv[]){
+    fastio;
+    cin.exceptions(cin.failbit);
+    ll tc; cin>>tc;
+    genPrimes(1e7);
+    while(tc--){
+        ll p, q; cin>>p>>q;
+        if(p % q !=0){
+            cout<<p<<endl;
+            continue;
+        }
+        vi factQ = factorize(q);
+        ll ans = 1;
+        for(auto& factNum: factQ){
+            ll x = p;
+            while(x % factNum == 0){
+                x/=factNum;
+                if(x % q!=0) break;
+            }
+            ans = max(ans, x);
+        }
+        cout<<ans<<endl;
+
+    }
+
+return 0;
+}
