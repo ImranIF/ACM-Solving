@@ -1,0 +1,155 @@
+/// Meet in the Middle - Algorithm ///
+
+#include<bits/stdc++.h>
+#include<ext/pb_ds/tree_policy.hpp>
+#include<ext/pb_ds/assoc_container.hpp>
+using namespace __gnu_pbds;
+using namespace std;
+
+///--->>> CONTAINERS <<<---///
+using i64 = int64_t;
+using ll = long long;
+using ld = long double;
+using vi = vector<ll>;
+using vvi = vector<vector< ll > >;
+using vpi = vector<pair<ll,ll> >;
+using pi = pair<ll,ll>;
+using st = set<ll>;
+using stk = stack<ll>;
+using kiwi = queue<ll>;
+using pkiwi = priority_queue<ll>;
+using mp = map<ll,ll>;
+using ump = unordered_map<ll,ll>;
+
+///--->>> TEMPLATES <<<---///
+template<typename T>
+using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update >;
+
+///--->>> MACROS<<<---///
+const ll mx = 3e6+123;
+#define MOD 998244353
+#define mod 1000000007
+#define isb(z) __builtin_popcount(z)
+#define lisb(z) __builtin_popcountll(z)
+#define iclz(z) __builtin_clz(z)
+#define lclz(z) __builtin_clzll(z)
+#define ictz(z) __builtin_ctz(z)
+#define lctz(z) __builtin_ctzll(z)
+#define REP(i,n) for (ll i=1;i<=n;++i)
+#define fastio ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
+
+///--->>>OPTIMIZE<<<---///
+#pragma GCC target ("avx2")
+#pragma GCC optimization ("O3")
+#pragma GCC optimization ("unroll-loops")
+///--->>> DEBUGGER<<<---///
+#define dbg(args...) do {cerr<<#args<<" : "; diraf(args); } while(0)
+void diraf ()  {        cerr << endl;}
+template < typename T, typename ... hello>void diraf( T arg, const hello &... rest) {cerr<<arg<< ' ';diraf(rest...);}
+
+///--->>> RANDOMIZER<<<---///
+mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+/* usage - just do rng() */
+
+int getMid(int s, int e) {  return s + (e -s)/2;  }
+  
+int getXorUtil(int *st, int ss, int se, int qs, int qe, int si)
+{
+    if (qs <= ss && qe >= se)
+        return st[si];
+  
+    if (se < qs || ss > qe)
+        return 0;
+  
+    int mid = getMid(ss, se);
+    return getXorUtil(st, ss, mid, qs, qe, 2*si+1) ^
+           getXorUtil(st, mid+1, se, qs, qe, 2*si+2);
+}
+  
+void updateValueUtil(int *st, int ss, int se, int i, int prev_val, int new_val, int si)
+{
+    if (i < ss || i > se)
+        return;
+  
+    st[si] = (st[si]^prev_val)^new_val; 
+    if (se != ss)
+    {
+        int mid = getMid(ss, se);
+        updateValueUtil(st, ss, mid, i, prev_val, new_val, 2*si + 1);
+        updateValueUtil(st, mid+1, se, i, prev_val, new_val, 2*si + 2);
+    }
+}
+  
+void updateValue(int arr[], int *st, int n, int i, int new_val)
+{
+	if (i < 0 || i > n-1) 
+    { 
+       /// printf("Invalid Input"); 
+        return; 
+    } 
+ ///   int diff = new_val - arr[i];
+    int temp = arr[i]; 
+    arr[i] = new_val;
+    //dbg(new_val, arr[i], i);
+    updateValueUtil(st, 0, n-1, i, temp, new_val, 0);
+}
+  
+int getXor(int *st, int n, int qs, int qe)
+{
+    return getXorUtil(st, 0, n-1, qs, qe, 0);
+}
+  
+int constructSTUtil(int arr[], int ss, int se, int *st, int si)
+{
+    if (ss == se)
+    {
+        st[si] = arr[ss];
+        return arr[ss];
+    }
+  
+    int mid = getMid(ss, se);
+    st[si] =  constructSTUtil(arr, ss, mid, st, si*2+1) ^
+              constructSTUtil(arr, mid+1, se, st, si*2+2);
+    return st[si];
+}
+  
+int *constructST(int arr[], int n)
+{ 
+  
+    int x = (int)(ceil(log2(n))); 
+  
+  
+    int max_size = 2*(int)pow(2, x) - 1; 
+  
+    int *st =  (int *)malloc(sizeof(int)*max_size);
+  
+    constructSTUtil(arr, 0, n-1, st, 0);
+    return st;
+}
+
+int main(int argc, char* argv[]){
+    fastio;
+    cin.exceptions(cin.failbit);
+    ///freopen("input.txt","r",stdin);
+    ///freopen("output.txt","w",stdout);
+    ///cout<<fixed<<setprecision(20);
+    ll n , q; cin>>n>>q;
+    int arr[n];
+    for(ll i = 0; i <n; ++i)
+    	cin>>arr[i]; 
+
+    int *st = constructST(arr, n); 
+    while(q--){
+    ll t, x, y; cin>>t>>x>>y;
+    if(t==2){
+		cout<<getXor(st, n, x-1, y-1)<<endl;
+		//for(ll i = 0; i <n; ++i)
+		//dbg(arr[i]); 
+    }
+    else{
+  		  updateValue(arr, st, n, x-1, arr[x-1]^ y);    	
+    }
+     
+	}
+	return 0;
+}
